@@ -51,18 +51,26 @@ interface ThemeConfig {
   panelBg: string;
   accent: string;
   accentText: string;
+  textHex: string;
+  paperBg: string;
+  outerBg: string;
+  isScroll?: boolean;
 }
 
 const THEMES: ThemeConfig[] = [
   {
     id: 'light',
-    name: '经典纸张',
-    bg: 'bg-[#FAF8F5]',
-    text: 'text-[#2C2926]',
-    border: 'border-[#EAE5DF]',
-    panelBg: 'bg-[#F4EFEB]',
-    accent: 'bg-[#5C4D3C]',
-    accentText: 'text-white'
+    name: '古典书卷',
+    bg: 'bg-[#2C2020]',
+    text: 'text-[#2E2020]',
+    border: 'border-[#E2CFA9]',
+    panelBg: 'bg-[#FAF6EE]',
+    accent: 'bg-[#B59146]',
+    accentText: 'text-white',
+    textHex: '#2E2020',
+    paperBg: 'bg-[#FAF6EE]',
+    outerBg: 'bg-[#2C2020]',
+    isScroll: true
   },
   {
     id: 'sepia',
@@ -72,7 +80,11 @@ const THEMES: ThemeConfig[] = [
     border: 'border-[#E3D3AF]',
     panelBg: 'bg-[#EBDDB7]',
     accent: 'bg-[#705335]',
-    accentText: 'text-white'
+    accentText: 'text-white',
+    textHex: '#3E2F1E',
+    paperBg: 'bg-[#F2E6C9]',
+    outerBg: 'bg-[#F2E6C9]',
+    isScroll: false
   },
   {
     id: 'mint',
@@ -82,27 +94,11 @@ const THEMES: ThemeConfig[] = [
     border: 'border-[#DBE5D5]',
     panelBg: 'bg-[#E1EAD9]',
     accent: 'bg-[#405D30]',
-    accentText: 'text-white'
-  },
-  {
-    id: 'night',
-    name: '深夜微光',
-    bg: 'bg-[#181A1B]',
-    text: 'text-[#D1D3D4]',
-    border: 'border-[#2B2E30]',
-    panelBg: 'bg-[#222426]',
-    accent: 'bg-[#435C7E]',
-    accentText: 'text-white'
-  },
-  {
-    id: 'amoled',
-    name: '纯黑深夜',
-    bg: 'bg-[#000000]',
-    text: 'text-[#C5C6C8]',
-    border: 'border-[#1C1D1F]',
-    panelBg: 'bg-[#0E0F10]',
-    accent: 'bg-[#2E6BFF]',
-    accentText: 'text-white'
+    accentText: 'text-white',
+    textHex: '#203119',
+    paperBg: 'bg-[#EEF4EA]',
+    outerBg: 'bg-[#EEF4EA]',
+    isScroll: false
   }
 ];
 
@@ -158,14 +154,14 @@ export default function Home() {
       const saved = localStorage.getItem('lnr_font_size');
       if (saved) return parseInt(saved, 10);
     }
-    return 18;
+    return 20;
   });
   const [fontFamily, setFontFamily] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('lnr_font_family');
       if (saved) return saved;
     }
-    return 'sans';
+    return 'serif';
   });
   const [containerWidth, setContainerWidth] = useState<string>(() => {
     if (typeof window !== 'undefined') {
@@ -186,7 +182,7 @@ export default function Home() {
       const saved = localStorage.getItem('lnr_line_height');
       if (saved) return parseFloat(saved);
     }
-    return 1.6;
+    return 1.8;
   });
   const [autoScrollSpeed, setAutoScrollSpeed] = useState<number>(0); // 0 = off, 1-10 speed
 
@@ -1513,78 +1509,116 @@ export default function Home() {
           {/* Chapter Content area */}
           <div 
             onClick={() => setIsReaderToolbarOpen(!isReaderToolbarOpen)}
-            className="pt-24 pb-20 px-4 cursor-default select-text"
+            className="pt-24 pb-20 px-4 cursor-default select-text min-h-screen flex flex-col justify-start"
           >
-            <div className={`mx-auto ${CONTAINER_WIDTHS.find(w => w.id === containerWidth)?.class || 'max-w-3xl'}`}>
-              
-              {/* Heading */}
-              <h1 
-                className="font-serif text-2xl md:text-3.5xl font-bold border-b pb-4 mb-8 text-center leading-normal"
-                style={{ fontSize: `${fontSize * 1.3}px` }}
-              >
-                {currentChapter.title}
-              </h1>
-
-              {/* Paragraphs body */}
-              <div 
-                className={`space-y-6 ${fontFamily === 'serif' ? 'font-serif' : fontFamily === 'mono' ? 'font-mono' : fontFamily === 'kaiti' ? 'font-cursive' : 'font-sans'}`}
-                style={{ 
-                  fontSize: `${fontSize}px`, 
-                  lineHeight: lineHeight,
-                  color: activeThemeObj.id === 'light' ? '#2C2926' : undefined // respect custom text variables
-                }}
-              >
-                {paragraphs.map((p, idx) => (
-                  <p 
-                    key={idx} 
-                    className="text-justify leading-relaxed" 
-                    style={{ textIndent: '2em' }}
-                  >
-                    {p.trim()}
-                  </p>
-                ))}
+            {/* Optional Top Ambient Header (outside the scroll page) */}
+            {activeThemeObj.isScroll && (
+              <div className={`w-full ${CONTAINER_WIDTHS.find(w => w.id === containerWidth)?.class || 'max-w-3xl'} mx-auto flex justify-end px-4 md:px-8 mb-3`}>
+                <span className="text-xs font-serif font-semibold text-[#D4AF37] tracking-widest">
+                  {currentChapter.title}
+                </span>
               </div>
+            )}
 
-              {/* Empty screen */}
-              {paragraphs.length === 0 && (
-                <div className="text-center py-12 opacity-60">
-                  <p>本章暂无内容或为空白文本</p>
-                </div>
+            {/* Parchment Scroll Sheet Container */}
+            <div className={`mx-auto w-full ${CONTAINER_WIDTHS.find(w => w.id === containerWidth)?.class || 'max-w-3xl'} ${
+              activeThemeObj.isScroll 
+                ? 'bg-[#FAF6EE] shadow-2xl relative border-l border-r border-[#E2D4BC] overflow-hidden' 
+                : ''
+            }`}>
+              {/* Golden Scroll Top Roller Decor */}
+              {activeThemeObj.isScroll && (
+                <div className="h-3 w-full bg-gradient-to-r from-[#B59146] via-[#F4E3B1] to-[#B59146] border-b border-black/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]" />
               )}
 
-              {/* Chapter navigation in bottom */}
-              <div className="mt-16 pt-8 border-t border-dashed opacity-85 flex justify-between gap-4">
-                <button
-                  id="btn-prev-chapter"
-                  disabled={activeChapterIndex === 0}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (activeChapterIndex > 0) {
-                      setActiveChapterIndex(activeChapterIndex - 1);
-                      window.scrollTo({ top: 0, behavior: 'auto' });
-                    }
-                  }}
-                  className={`flex-1 flex items-center justify-center gap-1 py-3 border ${activeThemeObj.border} rounded-lg disabled:opacity-30 hover:bg-black/5 transition text-sm font-semibold`}
+              {/* Inside paper container padding */}
+              <div className={`${activeThemeObj.isScroll ? 'px-6 py-12 md:px-14 md:py-18' : 'py-2'}`}>
+                {/* Inside-paper top-right tiny subtitle */}
+                {activeThemeObj.isScroll && (
+                  <div className="text-right text-xs font-serif text-[#8C7F70]/80 tracking-wider mb-6 flex justify-between items-center border-b border-[#FAF6EE] pb-2">
+                    <span className="opacity-60">{activeNovel.title}</span>
+                    <span>{currentChapter.title.split(' ').slice(1).join(' ') || '正文'}</span>
+                  </div>
+                )}
+
+                {/* Heading */}
+                <h1 
+                  className={`font-serif font-bold leading-normal mb-10 text-[#2C1E1E] ${
+                    activeThemeObj.isScroll 
+                      ? 'text-right tracking-wide border-b border-dashed border-[#EADFC9] pb-6' 
+                      : 'text-center border-b pb-4'
+                  }`}
+                  style={{ fontSize: `${fontSize * 1.3}px` }}
                 >
-                  <ChevronLeft className="w-4 h-4" />
-                  上一章
-                </button>
-                <button
-                  id="btn-next-chapter"
-                  disabled={activeChapterIndex === activeChapters.length - 1}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (activeChapterIndex < activeChapters.length - 1) {
-                      setActiveChapterIndex(activeChapterIndex + 1);
-                      window.scrollTo({ top: 0, behavior: 'auto' });
-                    }
+                  {currentChapter.title}
+                </h1>
+
+                {/* Paragraphs body */}
+                <div 
+                  className={`space-y-6 ${fontFamily === 'serif' ? 'font-serif' : fontFamily === 'mono' ? 'font-mono' : fontFamily === 'kaiti' ? 'font-cursive' : 'font-sans'}`}
+                  style={{ 
+                    fontSize: `${fontSize}px`, 
+                    lineHeight: lineHeight,
+                    color: activeThemeObj.textHex
                   }}
-                  className={`flex-1 flex items-center justify-center gap-1 py-3 border ${activeThemeObj.border} rounded-lg disabled:opacity-30 hover:bg-black/5 transition text-sm font-semibold`}
                 >
-                  下一章
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+                  {paragraphs.map((p, idx) => (
+                    <p 
+                      key={idx} 
+                      className="text-justify leading-relaxed" 
+                      style={{ textIndent: '2em' }}
+                    >
+                      {p.trim()}
+                    </p>
+                  ))}
+                </div>
+
+                {/* Empty screen */}
+                {paragraphs.length === 0 && (
+                  <div className="text-center py-12 opacity-60">
+                    <p>本章暂无内容或为空白文本</p>
+                  </div>
+                )}
+
+                {/* Chapter navigation */}
+                <div className="mt-16 pt-8 border-t border-dashed opacity-85 flex justify-between gap-4">
+                  <button
+                    id="btn-prev-chapter"
+                    disabled={activeChapterIndex === 0}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (activeChapterIndex > 0) {
+                        setActiveChapterIndex(activeChapterIndex - 1);
+                        window.scrollTo({ top: 0, behavior: 'auto' });
+                      }
+                    }}
+                    className={`flex-1 flex items-center justify-center gap-1 py-3 border ${activeThemeObj.border} rounded-lg disabled:opacity-30 hover:bg-black/5 transition text-sm font-semibold`}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    上一章
+                  </button>
+                  <button
+                    id="btn-next-chapter"
+                    disabled={activeChapterIndex === activeChapters.length - 1}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (activeChapterIndex < activeChapters.length - 1) {
+                        setActiveChapterIndex(activeChapterIndex + 1);
+                        window.scrollTo({ top: 0, behavior: 'auto' });
+                      }
+                    }}
+                    className={`flex-1 flex items-center justify-center gap-1 py-3 border ${activeThemeObj.border} rounded-lg disabled:opacity-30 hover:bg-black/5 transition text-sm font-semibold`}
+                  >
+                    下一章
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
+
+              {/* Golden Scroll Bottom Roller Decor */}
+              {activeThemeObj.isScroll && (
+                <div className="h-3 w-full bg-gradient-to-r from-[#B59146] via-[#F4E3B1] to-[#B59146] border-t border-black/15 shadow-[inset_0_-1px_0_rgba(255,255,255,0.2)]" />
+              )}
             </div>
           </div>
 
@@ -1656,7 +1690,7 @@ export default function Home() {
                             key={themeItem.id}
                             onClick={() => setReaderTheme(themeItem.id)}
                             title={themeItem.name}
-                            className={`w-6 h-6 rounded-full border flex-shrink-0 relative transition flex items-center justify-center ${themeItem.bg} ${
+                            className={`w-6 h-6 rounded-full border flex-shrink-0 relative transition flex items-center justify-center ${themeItem.paperBg} ${
                               readerTheme === themeItem.id 
                                 ? 'border-amber-700 ring-2 ring-amber-700/30 ring-offset-1' 
                                 : 'border-black/10'
