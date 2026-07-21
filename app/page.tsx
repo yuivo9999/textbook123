@@ -836,9 +836,25 @@ export default function Home() {
   // Formats chapter titles using " · " separator instead of spaces/colons
   const formatChapterTitle = (titleStr: string) => {
     if (!titleStr) return '';
-    return titleStr
-      .replace(/\s*[:：,，\s]\s*/g, ' · ')
-      .replace(/\s*·\s*·\s*/g, ' · ');
+    const trimmed = titleStr.trim();
+    // Match Chinese/English chapter prefix
+    // e.g., "第一章", "第1章", "第 2 章", "Chapter 1"
+    const prefixRegex = /^(第\s*[一二三四五六七八九十百千万零0-9]+\s*[章节]|Chapter\s*[0-9a-zA-Z]+)/i;
+    const match = trimmed.match(prefixRegex);
+    if (match) {
+      const prefix = match[0].replace(/\s+/g, ''); // Standardize to "第2章" by removing spaces inside
+      let rest = trimmed.slice(match[0].length).trim();
+      // Remove leading punctuation, spaces, or dots
+      rest = rest.replace(/^[:：,，\s\-·•·]+/g, '').trim();
+      return rest ? `${prefix} · ${rest}` : prefix;
+    }
+    // Fallback: split by colon or spaces if no standard chapter pattern matches
+    const separatorRegex = /[:：\s\-·•·]+/g;
+    const parts = trimmed.split(separatorRegex).filter(Boolean);
+    if (parts.length > 1) {
+      return `${parts[0]} · ${parts.slice(1).join(' ')}`;
+    }
+    return trimmed;
   };
 
   // Map font settings to high-quality system/premium CSS font-family stacks
@@ -1555,16 +1571,16 @@ export default function Home() {
             }`}>
               {/* Golden Scroll Top Roller Decor */}
               {activeThemeObj.isScroll && (
-                <div className="relative h-[16px] w-[calc(100%+32px)] -ml-[16px] -mr-[16px] z-10 select-none shadow-[0_3px_8px_rgba(0,0,0,0.45)] flex flex-col justify-between">
+                <div className="relative h-[16px] w-[calc(100%+32px)] -ml-[16px] -mr-[16px] z-10 select-none shadow-[0_4px_10px_rgba(0,0,0,0.5)] flex flex-col justify-between">
                   {/* High fidelity 3D cylinder background with bevel polygon caps */}
                   <div 
-                    className="absolute inset-0 bg-gradient-to-b from-[#8C6B2F] via-[#DFBF82] via-[#FDF3DA] via-[#CCAF71] to-[#60481E]" 
+                    className="absolute inset-0 bg-gradient-to-b from-[#7A581C] via-[#C9A654] via-[#EBD077] via-[#B8923A] to-[#5C4111]" 
                     style={{ clipPath: 'polygon(6px 0%, calc(100% - 6px) 0%, 100% 50%, calc(100% - 6px) 100%, 6px 100%, 0% 50%)' }}
                   />
                   {/* Top bright highlight line to give glossy look */}
-                  <div className="absolute top-[2px] left-[6px] right-[6px] h-[1px] bg-[#FFFFFF]/55 z-20 pointer-events-none" />
+                  <div className="absolute top-[2px] left-[6px] right-[6px] h-[1px] bg-[#FFFFFF]/35 z-20 pointer-events-none" />
                   {/* Bottom deep shadow line to construct physical depth */}
-                  <div className="absolute bottom-[2px] left-[6px] right-[6px] h-[1.5px] bg-[#3B2B11]/70 z-20 pointer-events-none" />
+                  <div className="absolute bottom-[2px] left-[6px] right-[6px] h-[1.5px] bg-[#2C1E07]/75 z-20 pointer-events-none" />
                 </div>
               )}
 
@@ -1650,16 +1666,16 @@ export default function Home() {
 
               {/* Golden Scroll Bottom Roller Decor */}
               {activeThemeObj.isScroll && (
-                <div className="relative h-[16px] w-[calc(100%+32px)] -ml-[16px] -mr-[16px] z-10 select-none shadow-[0_-3px_8px_rgba(0,0,0,0.45)] flex flex-col justify-between mt-12">
+                <div className="relative h-[16px] w-[calc(100%+32px)] -ml-[16px] -mr-[16px] z-10 select-none shadow-[0_-4px_10px_rgba(0,0,0,0.5)] flex flex-col justify-between mt-12">
                   {/* High fidelity 3D cylinder background with bevel polygon caps */}
                   <div 
-                    className="absolute inset-0 bg-gradient-to-b from-[#8C6B2F] via-[#DFBF82] via-[#FDF3DA] via-[#CCAF71] to-[#60481E]" 
+                    className="absolute inset-0 bg-gradient-to-b from-[#7A581C] via-[#C9A654] via-[#EBD077] via-[#B8923A] to-[#5C4111]" 
                     style={{ clipPath: 'polygon(6px 0%, calc(100% - 6px) 0%, 100% 50%, calc(100% - 6px) 100%, 6px 100%, 0% 50%)' }}
                   />
                   {/* Top bright highlight line to give glossy look */}
-                  <div className="absolute top-[2px] left-[6px] right-[6px] h-[1px] bg-[#FFFFFF]/55 z-20 pointer-events-none" />
+                  <div className="absolute top-[2px] left-[6px] right-[6px] h-[1px] bg-[#FFFFFF]/35 z-20 pointer-events-none" />
                   {/* Bottom deep shadow line to construct physical depth */}
-                  <div className="absolute bottom-[2px] left-[6px] right-[6px] h-[1.5px] bg-[#3B2B11]/70 z-20 pointer-events-none" />
+                  <div className="absolute bottom-[2px] left-[6px] right-[6px] h-[1.5px] bg-[#2C1E07]/75 z-20 pointer-events-none" />
                 </div>
               )}
             </div>
