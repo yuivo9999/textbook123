@@ -1,0 +1,6 @@
+{
+  "name": "Local Novel Reader",
+  "description": "A clean, efficient, and offline-first web novel reader. Import, manage, and read your txt/epub books completely locally in your browser with customized typography, themes, and reading progress preservation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
