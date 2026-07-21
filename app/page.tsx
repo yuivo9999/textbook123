@@ -61,43 +61,43 @@ const THEMES: ThemeConfig[] = [
   {
     id: 'light',
     name: '古典书卷',
-    bg: 'bg-[#2C2020]',
-    text: 'text-[#2E2020]',
-    border: 'border-[#E2CFA9]',
-    panelBg: 'bg-[#FAF6EE]',
+    bg: 'bg-[#312722]',
+    text: 'text-[#2E2116]',
+    border: 'border-[#D9CEB2]',
+    panelBg: 'bg-[#FCF8ED]',
     accent: 'bg-[#B59146]',
     accentText: 'text-white',
-    textHex: '#2E2020',
-    paperBg: 'bg-[#FAF6EE]',
-    outerBg: 'bg-[#2C2020]',
+    textHex: '#2E2116',
+    paperBg: 'bg-[#FCF8ED]',
+    outerBg: 'bg-[#312722]',
     isScroll: true
   },
   {
     id: 'sepia',
     name: '护眼羊皮',
-    bg: 'bg-[#F2E6C9]',
+    bg: 'bg-[#F3EAD3]',
     text: 'text-[#3E2F1E]',
-    border: 'border-[#E3D3AF]',
-    panelBg: 'bg-[#EBDDB7]',
-    accent: 'bg-[#705335]',
+    border: 'border-[#E0D4B7]',
+    panelBg: 'bg-[#F3EAD3]',
+    accent: 'bg-[#8C6D4A]',
     accentText: 'text-white',
     textHex: '#3E2F1E',
-    paperBg: 'bg-[#F2E6C9]',
-    outerBg: 'bg-[#F2E6C9]',
+    paperBg: 'bg-[#F3EAD3]',
+    outerBg: 'bg-[#F3EAD3]',
     isScroll: false
   },
   {
     id: 'mint',
     name: '清雅竹绿',
-    bg: 'bg-[#EEF4EA]',
-    text: 'text-[#203119]',
-    border: 'border-[#DBE5D5]',
-    panelBg: 'bg-[#E1EAD9]',
-    accent: 'bg-[#405D30]',
+    bg: 'bg-[#EEF5EA]',
+    text: 'text-[#1E2F19]',
+    border: 'border-[#D5E0CD]',
+    panelBg: 'bg-[#EEF5EA]',
+    accent: 'bg-[#4D6E3F]',
     accentText: 'text-white',
-    textHex: '#203119',
-    paperBg: 'bg-[#EEF4EA]',
-    outerBg: 'bg-[#EEF4EA]',
+    textHex: '#1E2F19',
+    paperBg: 'bg-[#EEF5EA]',
+    outerBg: 'bg-[#EEF5EA]',
     isScroll: false
   }
 ];
@@ -1513,9 +1513,9 @@ export default function Home() {
           >
             {/* Optional Top Ambient Header (outside the scroll page) */}
             {activeThemeObj.isScroll && (
-              <div className={`w-full ${CONTAINER_WIDTHS.find(w => w.id === containerWidth)?.class || 'max-w-3xl'} mx-auto flex justify-end px-4 md:px-8 mb-3`}>
-                <span className="text-xs font-serif font-semibold text-[#D4AF37] tracking-widest">
-                  {currentChapter.title}
+              <div className={`w-full ${CONTAINER_WIDTHS.find(w => w.id === containerWidth)?.class || 'max-w-3xl'} mx-auto flex justify-center px-4 mb-4`}>
+                <span className="text-xs font-serif font-bold text-[#E5C284] tracking-widest opacity-90 select-none">
+                  {activeNovel.title} · {currentChapter.title}
                 </span>
               </div>
             )}
@@ -1523,39 +1523,34 @@ export default function Home() {
             {/* Parchment Scroll Sheet Container */}
             <div className={`mx-auto w-full ${CONTAINER_WIDTHS.find(w => w.id === containerWidth)?.class || 'max-w-3xl'} ${
               activeThemeObj.isScroll 
-                ? 'bg-[#FAF6EE] shadow-2xl relative border-l border-r border-[#E2D4BC] overflow-hidden' 
+                ? `${activeThemeObj.paperBg} shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative border-l border-r border-[#D9CEB2] overflow-hidden` 
                 : ''
             }`}>
               {/* Golden Scroll Top Roller Decor */}
               {activeThemeObj.isScroll && (
-                <div className="h-3 w-full bg-gradient-to-r from-[#B59146] via-[#F4E3B1] to-[#B59146] border-b border-black/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]" />
+                <div className="h-3 w-full bg-gradient-to-r from-[#8E7037] via-[#D8BC79] via-[#FAF1D6] via-[#D8BC79] to-[#8E7037] border-b border-black/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]" />
               )}
 
               {/* Inside paper container padding */}
               <div className={`${activeThemeObj.isScroll ? 'px-6 py-12 md:px-14 md:py-18' : 'py-2'}`}>
-                {/* Inside-paper top-right tiny subtitle */}
+                {/* Inside-paper centered tiny subtitle */}
                 {activeThemeObj.isScroll && (
-                  <div className="text-right text-xs font-serif text-[#8C7F70]/80 tracking-wider mb-6 flex justify-between items-center border-b border-[#FAF6EE] pb-2">
-                    <span className="opacity-60">{activeNovel.title}</span>
-                    <span>{currentChapter.title.split(' ').slice(1).join(' ') || '正文'}</span>
+                  <div className="text-center text-xs font-serif text-[#8C7D68]/75 tracking-widest mb-8 pb-3 border-b border-dashed border-[#EADFC9]">
+                    <span>{activeNovel.title} · {currentChapter.title.split(' ').slice(1).join(' ') || '正文'}</span>
                   </div>
                 )}
 
                 {/* Heading */}
                 <h1 
-                  className={`font-serif font-bold leading-normal mb-10 text-[#2C1E1E] ${
-                    activeThemeObj.isScroll 
-                      ? 'text-right tracking-wide border-b border-dashed border-[#EADFC9] pb-6' 
-                      : 'text-center border-b pb-4'
-                  }`}
-                  style={{ fontSize: `${fontSize * 1.3}px` }}
+                  className="font-serif font-bold leading-normal mb-10 text-center tracking-wide border-b border-dashed border-[#EADFC9] pb-6 text-[#2C1E1E]"
+                  style={{ fontSize: `${fontSize * 1.35}px` }}
                 >
                   {currentChapter.title}
                 </h1>
 
                 {/* Paragraphs body */}
                 <div 
-                  className={`space-y-6 ${fontFamily === 'serif' ? 'font-serif' : fontFamily === 'mono' ? 'font-mono' : fontFamily === 'kaiti' ? 'font-cursive' : 'font-sans'}`}
+                  className={`space-y-8 tracking-wide font-medium ${fontFamily === 'serif' ? 'font-serif' : fontFamily === 'mono' ? 'font-mono' : fontFamily === 'kaiti' ? 'font-cursive' : 'font-sans'}`}
                   style={{ 
                     fontSize: `${fontSize}px`, 
                     lineHeight: lineHeight,
@@ -1617,7 +1612,7 @@ export default function Home() {
 
               {/* Golden Scroll Bottom Roller Decor */}
               {activeThemeObj.isScroll && (
-                <div className="h-3 w-full bg-gradient-to-r from-[#B59146] via-[#F4E3B1] to-[#B59146] border-t border-black/15 shadow-[inset_0_-1px_0_rgba(255,255,255,0.2)]" />
+                <div className="h-3 w-full bg-gradient-to-r from-[#8E7037] via-[#D8BC79] via-[#FAF1D6] via-[#D8BC79] to-[#8E7037] border-t border-black/15 shadow-[inset_0_-1px_0_rgba(255,255,255,0.2)]" />
               )}
             </div>
           </div>
