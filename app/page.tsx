@@ -833,6 +833,28 @@ export default function Home() {
     return c.title.toLowerCase().includes(q) || c.content.toLowerCase().includes(q);
   });
 
+  // Formats chapter titles using " · " separator instead of spaces/colons
+  const formatChapterTitle = (titleStr: string) => {
+    if (!titleStr) return '';
+    return titleStr
+      .replace(/\s*[:：,，\s]\s*/g, ' · ')
+      .replace(/\s*·\s*·\s*/g, ' · ');
+  };
+
+  // Map font settings to high-quality system/premium CSS font-family stacks
+  const getFontFamilyStyle = (id: string) => {
+    switch (id) {
+      case 'serif':
+        return '"Playfair Display", STSong, "Songti SC", SimSun, "Noto Serif CJK SC", Georgia, serif';
+      case 'mono':
+        return 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace';
+      case 'kaiti':
+        return 'KaiTi, "Kaiti SC", STKaiti, cursive';
+      default:
+        return 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+    }
+  };
+
   // Get active theme style
   const activeThemeObj = THEMES.find(t => t.id === readerTheme) || THEMES[0];
 
@@ -1424,7 +1446,12 @@ export default function Home() {
 
       {/* ----------------- FULL沉浸式 READER VIEW (小说阅读器) ----------------- */}
       {view === 'READER' && activeNovel && currentChapter && (
-        <div className="relative">
+        <div className="relative min-h-screen">
+          {/* Top grey header area ambient background for Classical Scroll */}
+          {activeThemeObj.isScroll && (
+            <div className="absolute top-0 left-0 right-0 h-[190px] bg-[#222222] border-b border-[#312722]/50 z-0 pointer-events-none select-none" />
+          )}
+
           {/* Top Reader Floating Bar */}
           <AnimatePresence>
             {isReaderToolbarOpen && (
@@ -1458,7 +1485,7 @@ export default function Home() {
 
                 {/* Mid: Chapter title for desktop */}
                 <div className={`hidden md:block font-serif font-semibold truncate max-w-sm ${activeThemeObj.text}`}>
-                  {currentChapter.title}
+                  {formatChapterTitle(currentChapter.title)}
                 </div>
 
                 {/* Right utility controls */}
@@ -1513,9 +1540,9 @@ export default function Home() {
           >
             {/* Optional Top Ambient Header (outside the scroll page) */}
             {activeThemeObj.isScroll && (
-              <div className={`w-full ${CONTAINER_WIDTHS.find(w => w.id === containerWidth)?.class || 'max-w-3xl'} mx-auto flex justify-center px-4 mb-4`}>
+              <div className={`w-full ${CONTAINER_WIDTHS.find(w => w.id === containerWidth)?.class || 'max-w-3xl'} mx-auto flex justify-center px-4 mb-4 z-10`}>
                 <span className="text-xs font-serif font-bold text-[#E5C284] tracking-widest opacity-90 select-none">
-                  {activeNovel.title} · {currentChapter.title}
+                  {activeNovel.title} · {formatChapterTitle(currentChapter.title)}
                 </span>
               </div>
             )}
@@ -1523,12 +1550,22 @@ export default function Home() {
             {/* Parchment Scroll Sheet Container */}
             <div className={`mx-auto w-full ${CONTAINER_WIDTHS.find(w => w.id === containerWidth)?.class || 'max-w-3xl'} ${
               activeThemeObj.isScroll 
-                ? `${activeThemeObj.paperBg} shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative border-l border-r border-[#D9CEB2] overflow-hidden` 
+                ? `${activeThemeObj.paperBg} shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative border-l border-r border-[#D9CEB2] overflow-visible` 
                 : ''
             }`}>
               {/* Golden Scroll Top Roller Decor */}
               {activeThemeObj.isScroll && (
-                <div className="h-3 w-full bg-gradient-to-r from-[#8E7037] via-[#D8BC79] via-[#FAF1D6] via-[#D8BC79] to-[#8E7037] border-b border-black/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]" />
+                <div className="relative h-[16px] w-[calc(100%+32px)] -ml-[16px] -mr-[16px] z-10 select-none shadow-[0_3px_8px_rgba(0,0,0,0.45)] flex flex-col justify-between">
+                  {/* High fidelity 3D cylinder background with bevel polygon caps */}
+                  <div 
+                    className="absolute inset-0 bg-gradient-to-b from-[#8C6B2F] via-[#DFBF82] via-[#FDF3DA] via-[#CCAF71] to-[#60481E]" 
+                    style={{ clipPath: 'polygon(6px 0%, calc(100% - 6px) 0%, 100% 50%, calc(100% - 6px) 100%, 6px 100%, 0% 50%)' }}
+                  />
+                  {/* Top bright highlight line to give glossy look */}
+                  <div className="absolute top-[2px] left-[6px] right-[6px] h-[1px] bg-[#FFFFFF]/55 z-20 pointer-events-none" />
+                  {/* Bottom deep shadow line to construct physical depth */}
+                  <div className="absolute bottom-[2px] left-[6px] right-[6px] h-[1.5px] bg-[#3B2B11]/70 z-20 pointer-events-none" />
+                </div>
               )}
 
               {/* Inside paper container padding */}
@@ -1536,25 +1573,26 @@ export default function Home() {
                 {/* Inside-paper centered tiny subtitle */}
                 {activeThemeObj.isScroll && (
                   <div className="text-center text-xs font-serif text-[#8C7D68]/75 tracking-widest mb-8 pb-3 border-b border-dashed border-[#EADFC9]">
-                    <span>{activeNovel.title} · {currentChapter.title.split(' ').slice(1).join(' ') || '正文'}</span>
+                    <span>{activeNovel.title} · {formatChapterTitle(currentChapter.title)}</span>
                   </div>
                 )}
 
                 {/* Heading */}
                 <h1 
                   className="font-serif font-bold leading-normal mb-10 text-center tracking-wide border-b border-dashed border-[#EADFC9] pb-6 text-[#2C1E1E]"
-                  style={{ fontSize: `${fontSize * 1.35}px` }}
+                  style={{ fontSize: `${fontSize * 1.35}px`, fontFamily: getFontFamilyStyle(fontFamily) }}
                 >
-                  {currentChapter.title}
+                  {formatChapterTitle(currentChapter.title)}
                 </h1>
 
                 {/* Paragraphs body */}
                 <div 
-                  className={`space-y-8 tracking-wide font-medium ${fontFamily === 'serif' ? 'font-serif' : fontFamily === 'mono' ? 'font-mono' : fontFamily === 'kaiti' ? 'font-cursive' : 'font-sans'}`}
+                  className="space-y-8 tracking-wide font-medium"
                   style={{ 
                     fontSize: `${fontSize}px`, 
                     lineHeight: lineHeight,
-                    color: activeThemeObj.textHex
+                    color: activeThemeObj.textHex,
+                    fontFamily: getFontFamilyStyle(fontFamily)
                   }}
                 >
                   {paragraphs.map((p, idx) => (
@@ -1612,7 +1650,17 @@ export default function Home() {
 
               {/* Golden Scroll Bottom Roller Decor */}
               {activeThemeObj.isScroll && (
-                <div className="h-3 w-full bg-gradient-to-r from-[#8E7037] via-[#D8BC79] via-[#FAF1D6] via-[#D8BC79] to-[#8E7037] border-t border-black/15 shadow-[inset_0_-1px_0_rgba(255,255,255,0.2)]" />
+                <div className="relative h-[16px] w-[calc(100%+32px)] -ml-[16px] -mr-[16px] z-10 select-none shadow-[0_-3px_8px_rgba(0,0,0,0.45)] flex flex-col justify-between mt-12">
+                  {/* High fidelity 3D cylinder background with bevel polygon caps */}
+                  <div 
+                    className="absolute inset-0 bg-gradient-to-b from-[#8C6B2F] via-[#DFBF82] via-[#FDF3DA] via-[#CCAF71] to-[#60481E]" 
+                    style={{ clipPath: 'polygon(6px 0%, calc(100% - 6px) 0%, 100% 50%, calc(100% - 6px) 100%, 6px 100%, 0% 50%)' }}
+                  />
+                  {/* Top bright highlight line to give glossy look */}
+                  <div className="absolute top-[2px] left-[6px] right-[6px] h-[1px] bg-[#FFFFFF]/55 z-20 pointer-events-none" />
+                  {/* Bottom deep shadow line to construct physical depth */}
+                  <div className="absolute bottom-[2px] left-[6px] right-[6px] h-[1.5px] bg-[#3B2B11]/70 z-20 pointer-events-none" />
+                </div>
               )}
             </div>
           </div>
@@ -1856,7 +1904,7 @@ export default function Home() {
                                   : 'border-transparent hover:bg-black/5'
                               }`}
                             >
-                              <span className="truncate pr-2">{ch.title}</span>
+                              <span className="truncate pr-2">{formatChapterTitle(ch.title)}</span>
                               <span className="text-[10px] opacity-65 flex-shrink-0">
                                 {ch.content.length > 1000 
                                   ? `${(ch.content.length / 1000).toFixed(1)}k字` 
